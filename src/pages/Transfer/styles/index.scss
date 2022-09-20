@@ -1,0 +1,57 @@
+@use "sass:math";
+
+.transferView {
+    width: 100%;
+    text-align: center;
+
+    h1.title {
+        margin: 10px 0px;
+    }
+
+    button.connectWallet {
+        margin: 20px 0px;
+    }
+
+    div.transferInfo {
+        margin: 20px 0px;
+
+        div.tokenAddress {
+            width: 410px;
+            margin-right: 10px;
+        }
+
+        div.tokenInfo {
+            margin: 0 auto;
+            width: 410px;
+            display: flex;
+            justify-content: space-between;
+
+            h3 {
+                font-size: 14px;
+                color: gray;
+                font-weight: normal;
+                margin-top: 5px;
+            }
+        }
+
+        ul.addressList {
+            max-height: 500px;
+            margin-top: 20px;
+            overflow: auto;
+
+            li {
+                margin-top: 10px;
+                .tokenAddress {
+                    width: 410px;
+                    margin-right: 10px;
+                }
+            }
+        }
+
+        div.totalAmount {
+            margin-top: 10px;
+            font-size: 14px;
+            color: gray;
+        }
+    }
+}
