@@ -183,7 +183,7 @@ const TransferView: FC = () => {
 
   return (
     <div className={baseStyle}>
-      <h1 className={`title`}>Free Transfer</h1>
+      <a href="https://github.com/DoctorLi2042/FreeTransfer"><h1 className={`title`}>Free Transfer{'->'}</h1></a>
       <div>
         <Button
           className="connectWallet"
@@ -251,6 +251,7 @@ const TransferView: FC = () => {
           color="primary"
           aria-label="add"
           disabled={!checkAddressListNull()}
+          className='add-button'
           onClick={() => {
             if (!checkAddressListNull()) {
               return;
@@ -266,6 +267,7 @@ const TransferView: FC = () => {
         >
           <AddIcon />
         </Fab>
+
         <div>
           <Button
             className="connectWallet"
@@ -283,6 +285,10 @@ const TransferView: FC = () => {
             {checkAllow() ? 'Transfer' : 'Approve'}
           </Button>
         </div>
+      </div>
+      <div className="sponsoring">
+        <h3>Thanks for sponsoring</h3>
+        <a href="https://nestprotocol.org/"><img src="nest_logo_120.jpeg" alt="nestLogo"/></a>
       </div>
     </div>
   );

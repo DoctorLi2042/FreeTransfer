@@ -4,8 +4,11 @@
     width: 100%;
     text-align: center;
 
-    h1.title {
-        margin: 10px 0px;
+    a {
+        color: black;
+        h1.title {
+            margin: 10px 0px;
+        }
     }
 
     button.connectWallet {
@@ -52,6 +55,23 @@
             margin-top: 10px;
             font-size: 14px;
             color: gray;
+        }
+
+        .add-button {
+            margin-top: 10px;
+        }
+    }
+
+    div.sponsoring {
+        h3 {
+            margin-bottom: 10px;
+        }
+        a {
+            img {
+                width: 80px;
+                height: 80px;
+                border-radius: 40px;
+            }
         }
     }
 }
