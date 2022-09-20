@@ -37,9 +37,22 @@
             }
         }
 
+        div.check {
+            margin-top: 10px;
+        }
+
+        div.import {
+            margin: 0 auto;
+            width: 670px;
+            text-align: right;
+            padding: 0 5px;
+        }
+
         ul.addressList {
+            margin: 0 auto;
+            width: 670px;
             max-height: 500px;
-            margin-top: 20px;
+            margin-top: 5px;
             overflow: auto;
 
             li {

@@ -10,10 +10,15 @@ import { useWeb3 } from "../../libs/connectors/connectHooks";
 import { getERC20Contract, GetFreeTransfer } from "../../contracts/getContract";
 import { BigNumber } from "ethers";
 import { NULL_NUM } from "../../libs/utils";
-import { formatUnits } from "ethers/lib/utils";
+import { formatUnits, parseUnits } from "ethers/lib/utils";
 import Fab from "@mui/material/Fab";
 import TransferList from "./TransferList";
 import { FreeTransfer } from "../../libs/addresses";
+import Dialog from "@mui/material/Dialog";
+import DialogTitle from "@mui/material/DialogTitle";
+import DialogContent from "@mui/material/DialogContent";
+import DialogContentText from "@mui/material/DialogContentText";
+import DialogActions from "@mui/material/DialogActions";
 
 enum ConnectorNames {
   Injected = "Injected",
@@ -38,6 +43,8 @@ const TransferView: FC = () => {
   const [decimals, setDecimals] = useState<BigNumber>();
   const [balance, setBalance] = useState<BigNumber>();
   const [symbol, setSymbol] = useState<string>();
+  const [importData, setImportData] = useState<string>("");
+  const [openInput, setOpenInput] = useState<boolean>(false);
   const [addressList, setAddressList] = useState<Array<AddressListType>>([
     {
       address: "",
@@ -62,7 +69,15 @@ const TransferView: FC = () => {
     }
   };
 
-  const freeTransfer = GetFreeTransfer()
+  const freeTransfer = GetFreeTransfer();
+
+  const handleClickOpenInput = () => {
+    setOpenInput(true);
+  };
+
+  const handleCloseInput = () => {
+    setOpenInput(false);
+  };
 
   const changeAddress = (index: number, address: string) => {
     const newAddressList = addressList;
@@ -73,6 +88,21 @@ const TransferView: FC = () => {
   const changeAmount = (index: number, amount: string) => {
     const newAddressList = addressList;
     newAddressList[index].amount = amount;
+    setAddressList([...newAddressList]);
+  };
+
+  const setImportString = () => {
+    const listData = importData.replace(/\s+/g,"").split(";");
+    const newAddressList: Array<AddressListType> = [];
+    for (let index = 0; index < listData.length-1; index++) {
+      const element = listData[index];
+      const elementArray = element.split(",");
+      const thisData = {
+        address: elementArray[0],
+        amount: parseUnits(elementArray[1], (decimals ?? 18)).toString(),
+      };
+      newAddressList.push(thisData);
+    }
     setAddressList([...newAddressList]);
   };
 
@@ -87,7 +117,7 @@ const TransferView: FC = () => {
         setAllowAmount(allow);
       })();
     }
-  }, [account, chainId, library, tokenAddress])
+  }, [account, chainId, library, tokenAddress]);
 
   const checkAllow = () => {
     if (totalAmount) {
@@ -106,12 +136,15 @@ const TransferView: FC = () => {
           FreeTransfer[chainId],
           totalAmount
         );
-        await tx.wait().then((result: any) => {
-          console.log(result)
-          getAllow()
-        }).catch((err: any) => {
-          console.log(err)
-        });;
+        await tx
+          .wait()
+          .then((result: any) => {
+            console.log(result);
+            getAllow();
+          })
+          .catch((err: any) => {
+            console.log(err);
+          });
       }
     })();
   };
@@ -120,25 +153,28 @@ const TransferView: FC = () => {
     (async () => {
       if (freeTransfer && account && chainId) {
         const addresses = addressList.map((item) => {
-          return item.address
-        })
+          return item.address;
+        });
         const tokenAmount = addressList.map((item) => {
-          return item.amount
-        })
+          return item.amount;
+        });
         const tx = await freeTransfer!.transfer(
           addresses,
           tokenAmount,
           tokenAddress
         );
-        await tx.wait().then((result: any) => {
-          console.log(result)
-          getAllow()
-        }).catch((err: any) => {
-          console.log(err)
-        });;
+        await tx
+          .wait()
+          .then((result: any) => {
+            console.log(result);
+            getAllow();
+          })
+          .catch((err: any) => {
+            console.log(err);
+          });
       }
     })();
-  }
+  };
 
   useEffect(() => {
     var total = BigNumber.from("0");
@@ -151,7 +187,7 @@ const TransferView: FC = () => {
 
   useEffect(() => {
     if (account && chainId) {
-      getAllow()
+      getAllow();
     }
   }, [account, chainId, library, tokenAddress, getAllow]);
 
@@ -183,7 +219,9 @@ const TransferView: FC = () => {
 
   return (
     <div className={baseStyle}>
-      <a href="https://github.com/DoctorLi2042/FreeTransfer"><h1 className={`title`}>Free Transfer{'->'}</h1></a>
+      <a href="https://github.com/DoctorLi2042/FreeTransfer">
+        <h1 className={`title`}>Free Transfer{"->"}</h1>
+      </a>
       <div>
         <Button
           className="connectWallet"
@@ -227,15 +265,53 @@ const TransferView: FC = () => {
         ) : (
           <></>
         )}
-        <div>
+        <div className="check">
           <Button
-            className="connectWallet"
             variant="contained"
             size={`small`}
             onClick={getDecimalsAndBalance}
           >
             check
           </Button>
+        </div>
+
+        <div className="import">
+          <Button variant="outlined" onClick={handleClickOpenInput}>
+            import
+          </Button>
+          <Dialog open={openInput} onClose={handleCloseInput}>
+            <DialogTitle>Input Data</DialogTitle>
+            <DialogContent>
+              <DialogContentText>
+                example: 0x688f016CeDD62AD1d8dFA4aBcf3762ab29294489, 1.23;
+                0x688f016CeDD62AD1d8dFA4aBcf3762ab29294489, 2.34;
+              </DialogContentText>
+              <TextField
+                autoFocus
+                margin="dense"
+                id="name"
+                label="Data"
+                type="text"
+                fullWidth
+                variant="standard"
+                value={importData}
+                onChange={(e) => {
+                  setImportData(e.target.value);
+                }}
+              />
+            </DialogContent>
+            <DialogActions>
+              <Button onClick={handleCloseInput}>Cancel</Button>
+              <Button
+                onClick={() => {
+                  setImportString();
+                  handleCloseInput();
+                }}
+              >
+                Subscribe
+              </Button>
+            </DialogActions>
+          </Dialog>
         </div>
 
         <ul className="addressList">{mapLi()}</ul>
@@ -251,7 +327,7 @@ const TransferView: FC = () => {
           color="primary"
           aria-label="add"
           disabled={!checkAddressListNull()}
-          className='add-button'
+          className="add-button"
           onClick={() => {
             if (!checkAddressListNull()) {
               return;
@@ -276,19 +352,21 @@ const TransferView: FC = () => {
             endIcon={<SendIcon />}
             onClick={() => {
               if (checkAllow()) {
-                transferTransaction()
+                transferTransaction();
               } else {
-                approveTransaction()
+                approveTransaction();
               }
             }}
           >
-            {checkAllow() ? 'Transfer' : 'Approve'}
+            {checkAllow() ? "Transfer" : "Approve"}
           </Button>
         </div>
       </div>
       <div className="sponsoring">
         <h3>Thanks for sponsoring</h3>
-        <a href="https://nestprotocol.org/"><img src="nest_logo_120.jpeg" alt="nestLogo"/></a>
+        <a href="https://nestprotocol.org/">
+          <img src="nest_logo_120.jpeg" alt="nestLogo" />
+        </a>
       </div>
     </div>
   );
