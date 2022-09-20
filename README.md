@@ -1,3 +1,21 @@
+# Description
+BNB and BNB Test Network bulk transfers are currently supported.
+
+## Transfer contract
+The contract is open source and the code can be viewed at BNBScan.
+
+[BNB main network: 0x8d8e4d946ED4c818C9ace798C869C6F93cCF3df0](https://bscscan.com/address/0x8d8e4d946ED4c818C9ace798C869C6F93cCF3df0)
+
+[BNB test network: 0x1EA0662DDE46a69626ea48c558c4591f014D3d16](https://testnet.bscscan.com/address/0x1ea0662dde46a69626ea48c558c4591f014d3d16)
+
+
+## Subsequent development plan
+1. add BNB batch transfer function
+2. import address and amount data by format
+3. each line of data can be deleted individually
+4. input box and button condition detection
+
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
