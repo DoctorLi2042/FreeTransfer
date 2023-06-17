@@ -1,4 +1,4 @@
-import { FC, useCallback, useEffect, useState } from "react";
+import { FC, useCallback, useEffect, useMemo, useState } from "react";
 import Button from "@mui/material/Button";
 import "./styles";
 import TextField from "@mui/material/TextField";
@@ -92,14 +92,14 @@ const TransferView: FC = () => {
   };
 
   const setImportString = () => {
-    const listData = importData.replace(/\s+/g,"").split(";");
+    const listData = importData.replace(/\s+/g, "").split(";");
     const newAddressList: Array<AddressListType> = [];
-    for (let index = 0; index < listData.length-1; index++) {
+    for (let index = 0; index < listData.length - 1; index++) {
       const element = listData[index];
       const elementArray = element.split(",");
       const thisData = {
         address: elementArray[0],
-        amount: parseUnits(elementArray[1], (decimals ?? 18)).toString(),
+        amount: parseUnits(elementArray[1], decimals ?? 18).toString(),
       };
       newAddressList.push(thisData);
     }
@@ -217,6 +217,18 @@ const TransferView: FC = () => {
     return true;
   };
 
+  const chainName = useMemo(() => {
+    if (chainId === 56) {
+      return "BNB";
+    } else if (chainId === 97) {
+      return "BNB Test";
+    } else if (chainId === 534353) {
+      return "Scroll Alpha Testnet";
+    } else {
+      return "Wrong network";
+    }
+  }, [chainId]);
+
   return (
     <div className={baseStyle}>
       <a href="https://github.com/DoctorLi2042/FreeTransfer">
@@ -239,6 +251,7 @@ const TransferView: FC = () => {
         >
           {account ? account : "Connect Wallet"}
         </Button>
+        <p>{chainName}</p>
       </div>
       <div className="transferInfo">
         <TextField
